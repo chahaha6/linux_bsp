@@ -17,7 +17,7 @@ void sigio_handler(int signo)
     int ret;
 
     printf("\n=====================================\n");
-    printf("收到内核 SIGIO 信号！设备已就绪\n");
+    printf("收到内核SIGIO信号！设备已就绪\n");
 
     // 此时 read 一定不会阻塞！
     ret = read(fd, buf, sizeof(buf)-1);
@@ -34,6 +34,7 @@ int main()
 
     // 1. 打开设备
     fd = open(DEV_PATH, O_RDWR);
+    //error handle
     if(fd < 0)
     {
         perror("open failed");

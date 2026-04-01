@@ -20,7 +20,7 @@ int main()
     }
 
     write(fd, buf, strlen(buf));
-    printf("✅ 数据已写入驱动！\n");
+    printf("数据已写入驱动！\n");
 
     close(fd);
     return 0;
