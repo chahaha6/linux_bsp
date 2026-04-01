@@ -19,7 +19,7 @@ int main()
     }
 
     write(fd, buf, strlen(buf));
-    printf("✅ 已写入数据：%s\n", buf);
+    printf("已写入数据：%s\n", buf);
 
     close(fd);
     return 0;

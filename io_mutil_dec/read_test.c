@@ -46,7 +46,7 @@ int main()
             ret = read(fd, buf, sizeof(buf)-1);
 
             if (ret > 0) {
-                printf("✅ poll 触发成功！读到数据：%s\n", buf);
+                printf("poll 触发成功！读到数据：%s\n", buf);
             }
         }
     }
