@@ -16,8 +16,8 @@ int my_dev_driver_remove(struct platform_device *my_platform_dev)
 }
 
 struct platform_device_id id_table_match[] = {
-    [0] = {"my_platform_device01",1},
-    [1] = {"my_platform_device02",2},
+    [0] = {"my_device01",1},
+    [1] = {"my_device02",2},
     [2] = {/*最后一个一定要给一个空元素，代表结束*/}
 };
 
@@ -27,7 +27,7 @@ struct platform_driver my_platform_driver = {
     .probe = my_dev_driver_probe,
     .remove = my_dev_driver_remove,
     .driver = {
-        .name = "my_platform_device",
+        .name = "my_device",
     },
     .id_table = id_table_match,
 };
