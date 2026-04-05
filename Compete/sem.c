@@ -34,20 +34,20 @@ ssize_t xxx_sample_chardev_read(struct file *file, char __user *userbuf, size_t 
 {
     int ret;
 
-    //信号量写法
-    // ret = down_trylock(&my_chrdev.sem);
-    // if (ret) {
-    //     printk("设备已锁，返回 EBUSY\n");
-    //     return -EBUSY;
-    // }
-    //互斥量写法
-    ret = mutex_trylock(&my_chrdev.mtx);
-    if(!ret)
-    {
+    信号量写法
+    ret = down_trylock(&my_chrdev.sem);
+    if (ret) {
         printk("设备已锁，返回 EBUSY\n");
         return -EBUSY;
     }
-    printk("内核read执行，pid=%d\n", current->pid);
+    //互斥量写法
+    // ret = mutex_trylock(&my_chrdev.mtx);
+    // if(!ret)
+    // {
+    //     printk("设备已锁，返回 EBUSY\n");
+    //     return -EBUSY;
+    // }
+    // printk("内核read执行，pid=%d\n", current->pid);
 
     return size;
 }
@@ -66,8 +66,8 @@ int xxx_sample_chardev_open(struct inode *inode, struct file *file)
 
 int xxx_sample_chardev_release(struct inode *inode, struct file *file)
 {
-    mutex_unlock(&my_chrdev.mtx);
-    // up(&my_chrdev.sem); // 关闭才解锁
+    // mutex_unlock(&my_chrdev.mtx);。//互斥量   
+    up(&my_chrdev.sem); // 信号量关闭才解锁
     printk("内核close执行，已解锁\n");
     return 0;
 }

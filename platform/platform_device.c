@@ -41,8 +41,9 @@ void my_release(struct device *dev)
 }
 
 // 平台设备结构体
+//匹配过程优先使用id_table表，如果id_table表匹配不上，则使用.name进行匹配
 struct platform_device my_device = {
-    .name = "my_platform_device01", 
+    .name = "my_device01", 
     .id   = -1,
     .resource = my_resource_res,
     .num_resources = ARRAY_SIZE(my_resource_res),
@@ -51,6 +52,16 @@ struct platform_device my_device = {
     },
 };
 
+//这里就是名字匹配，因为id_table表中没有“my_device”这个名字
+// struct platform_device my_device = {
+//     .name = "my_device", 
+//     .id   = -1,
+//     .resource = my_resource_res,
+//     .num_resources = ARRAY_SIZE(my_resource_res),
+//     .dev = {
+//         .release = my_release,
+//     },
+// };
 static int __init my_dev_init(void)
 {
     platform_device_register(&my_device);
