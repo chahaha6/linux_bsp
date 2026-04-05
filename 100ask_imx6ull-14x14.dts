@@ -504,7 +504,7 @@
 				phandle = <0x9>;
 			};
 
-			gpio@020ac000 {
+			gpio4:gpio@020ac000 {
 				compatible = "fsl,imx6ul-gpio", "fsl,imx35-gpio";
 				reg = <0x20ac000 0x4000>;
 				interrupts = <0x0 0x4a 0x4 0x0 0x4b 0x4>;
@@ -1613,19 +1613,29 @@
 		linux,phandle = <0x2b>;
 		phandle = <0x2b>;
 	};
-
-led1: my_led1@20AC000 {
-    #address-cells = <1>;   
-    #size-cells = <1>;      
-
-    model = "this is a led1 desc";
-    compatible = "imx6ull,led";  
-
-    dev_type = "LED";
-    reg = <0x20AC000 0x4   // GPIO5_DR
-           0x20AC004 0x4   // GPIO5_GDIR
-           0x20C4074 0x4>; // CCM CCGR5（时钟）
-
-    status = "okay";
-};
+	//设备树匹配驱动
+	// myled: led_dtb@20ac000 {  
+	// 	#address-cells = <1>;
+	// 	#size-cells = <1>;
+		
+	// 	compatible = "imx6ull,led"; 
+	// 	status = "okay";
+		
+	// 	// 修改为 GPIO5 的基地址
+	// 	reg = <0x020AC000 0x4   /* GPIO5_DR (数据寄存器) */
+	// 		0x020AC004 0x4   /* GPIO5_GDIR (方向寄存器) */
+	// 		0x20C4074 0x4>;  /* CCM_CCGR1 (时钟寄存器，地址不变) */
+			
+	// 	dev_type = "LED"; 
+	// };
+	
+	//采用GPIO子系统
+	myled: led_dtb{  
+		#address-cells = <1>;
+		#size-cells = <1>;
+		
+		compatible = "imx6ull,led"; 
+		status = "okay";
+		gpio = <&gpio4 3 0>	;		
+	};
 };
