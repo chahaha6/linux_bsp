@@ -1613,4 +1613,19 @@
 		linux,phandle = <0x2b>;
 		phandle = <0x2b>;
 	};
+
+led1: my_led1@20AC000 {
+    #address-cells = <1>;   
+    #size-cells = <1>;      
+
+    model = "this is a led1 desc";
+    compatible = "imx6ull,led";  
+
+    dev_type = "LED";
+    reg = <0x20AC000 0x4   // GPIO5_DR
+           0x20AC004 0x4   // GPIO5_GDIR
+           0x20C4074 0x4>; // CCM CCGR5（时钟）
+
+    status = "okay";
+};
 };
