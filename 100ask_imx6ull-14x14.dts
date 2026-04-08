@@ -1631,8 +1631,6 @@
 	
 	//采用GPIO子系统
 	myled: led_dtb{  
-		#address-cells = <1>;
-		#size-cells = <1>;
 		
 		compatible = "imx6ull,led"; 
 		status = "okay";
