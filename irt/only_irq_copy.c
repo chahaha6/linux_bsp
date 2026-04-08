@@ -99,7 +99,7 @@ int my_dev_driver_probe(struct platform_device *pdev)
     gpio_direction_output(myled.led1_gpios, 0);
 
     // 3. 读取按键 gpio-keys 节点
-    key_node = of_find_node_by_path("/gpio-keys");
+    key_node = of_find_node_by_path("/gpio_keys");
     if (!key_node) return -ENODEV;
 
     int index = 0;
@@ -111,9 +111,6 @@ int my_dev_driver_probe(struct platform_device *pdev)
         index++;
     }
 
-    // 4. 申请 GPIO 为输入
-    gpio_direction_input(myled.key1_gpio);
-    gpio_direction_input(myled.key2_gpio);
 
     // 5. 获取中断号
     myled.irq1 = gpio_to_irq(myled.key1_gpio);
