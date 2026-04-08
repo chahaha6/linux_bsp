@@ -1,6 +1,4 @@
-/**
- * 只使用中断子系统需要在设备树中，把gpio-keys的status状态设置为“disable”。
-*/
+
 #include <linux/module.h>
 #include <linux/init.h>
 #include <linux/platform_device.h>
