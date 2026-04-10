@@ -1,4 +1,3 @@
-
 #include <linux/module.h>
 #include <linux/init.h>
 #include <linux/platform_device.h>
@@ -14,20 +13,40 @@
 #include <linux/of_irq.h>
 #include <linux/interrupt.h>
 #include <linux/uaccess.h>
+#include <linux/input.h>
 
-struct input_dev *test_dev; //定义一个输入设备test_dev
+struct my_key
+{
+    int key1_gpio;
+    int key2_gpio;
+    int irq1;
+    int irq2;
+    struct input_dev *test_dev; 
+};
 
+struct my_key my_keys;
+
+// 修改点1：添加 Input 上报逻辑
 static irqreturn_t key1_irq_handler(int irq, void *dev_id)
 {
-    gpio_set_value(myled.led1_gpios, 0);
-    printk("KEY1 中断：LED ON\n");
+    // 上报按键事件
+    input_report_key(my_keys.test_dev, KEY_1, 0);
+    input_sync(my_keys.test_dev); // 
+
+    
+    gpio_set_value(my_keys.key1_gpio, 0); 
+    printk("KEY1 中断上报: %d\n", 0);
+    
     return IRQ_HANDLED;
 }
 
+// 修改点2：添加 Input 上报逻辑
 static irqreturn_t key2_irq_handler(int irq, void *dev_id)
 {
-    gpio_set_value(myled.led1_gpios, 1);
-    printk("KEY2 中断：LED OFF\n");
+    input_report_key(my_keys.test_dev, KEY_2, 1);
+    input_sync(my_keys.test_dev);
+    printk("KEY2 中断上报: %d\n", 1);
+
     return IRQ_HANDLED;
 }
 
@@ -36,61 +55,63 @@ int my_dev_driver_probe(struct platform_device *pdev)
     int ret;
     struct device_node *key_node, *child;
 
-
-    key_node = of_find_node_by_path("/gpio_keys");
+    key_node = pdev->dev.of_node; 
     if (!key_node) return -ENODEV;
 
     int index = 0;
     for_each_child_of_node(key_node, child) {
         if (index == 0)
-            myled.key1_gpio = of_get_named_gpio(child, "gpios", 0);
+            my_keys.key1_gpio = of_get_named_gpio(child, "gpios", 0);
         if (index == 1)
-            myled.key2_gpio = of_get_named_gpio(child, "gpios", 0);
+            my_keys.key2_gpio = of_get_named_gpio(child, "gpios", 0);
         index++;
     }
 
+    my_keys.irq1 = gpio_to_irq(my_keys.key1_gpio);
+    my_keys.irq2 = gpio_to_irq(my_keys.key2_gpio);
 
-    myled.irq1 = gpio_to_irq(myled.key1_gpio);
-    myled.irq2 = gpio_to_irq(myled.key2_gpio);
-
-    ret = devm_request_irq(&pdev->dev, myled.irq1, key1_irq_handler,
+    ret = devm_request_irq(&pdev->dev, my_keys.irq1, key1_irq_handler,
                            IRQF_TRIGGER_FALLING | IRQF_SHARED,
-                           "key1_irq", &myled);
+                           "key1_irq", &my_keys);
 
-    ret = devm_request_irq(&pdev->dev, myled.irq2, key2_irq_handler,
+    ret = devm_request_irq(&pdev->dev, my_keys.irq2, key2_irq_handler,
                            IRQF_TRIGGER_FALLING | IRQF_SHARED,
-                           "key2_irq", &myled);
+                           "key2_irq", &my_keys);
 
-    printk("按键中断注册成功！KEY1_IRQ=%d, KEY2_IRQ=%d\n", myled.irq1, myled.irq2);
+    printk("按键中断注册成功！KEY1_IRQ=%d, KEY2_IRQ=%d\n", my_keys.irq1, my_keys.irq2);
 
-    test_dev = input_allocate_device();
-    test_dev->name = "gpio_keys"
+    my_keys.test_dev = input_allocate_device();
+    if (!my_keys.test_dev) return -ENOMEM;  
 
-    set_bit(EV_KEY, test_dev->evbit);
-    set_bit(KEY_1, test_dev->keybit);
+    my_keys.test_dev->name = "gpio_keys";
 
-    ret = input_register_device(test_dev);
+    set_bit(EV_KEY, my_keys.test_dev->evbit);
+    set_bit(EV_SYN, my_keys.test_dev->evbit); 
+    set_bit(KEY_1, my_keys.test_dev->keybit);
+    set_bit(KEY_2, my_keys.test_dev->keybit);
+
+    ret = input_register_device(my_keys.test_dev);
     if(ret < 0)
     {
-        printf("input_register_device is error \n");
+        printk("input_register_device is error \n");
+        input_free_device(my_keys.test_dev); 
+        return ret;
     }
     return 0;
 }
 
 int my_dev_driver_remove(struct platform_device *pdev)
 {
-    // devm_ 自动释放中断，无需手动 free_irq
-
-    gpio_free(myled.led1_gpios);
-    unregister_chrdev_region(myled.devid, 1);
-    kfree(myled.c_dev);
-
+    free_irq(my_keys.irq1, NULL);
+    free_irq(my_keys.irq2, NULL);
+    input_unregister_device(my_keys.test_dev);
+    printk("gooodbye! \n");
     return 0;
 }
 
 // 匹配表不变
 struct of_device_id of_node_match_table[] = {
-    {.compatible = "imx6ull,led"},
+    {.compatible = "gpio_keys"},
     {}
 };
 
