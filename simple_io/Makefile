@@ -11,12 +11,12 @@ KERN_DIR = /home/book/100ask_imx6ull-sdk/Linux-4.9.88
 
 all:
 	make -C $(KERN_DIR) M=`pwd` modules 
-#	$(CROSS_COMPILE)gcc -o test test.c 
+	$(CROSS_COMPILE)gcc -o app app.c 
 
 clean:
 	make -C $(KERN_DIR) M=`pwd` modules clean
 	rm -rf modules.order
-	rm -f test 
+	rm -f app
 
 obj-m	+= simple_io.o
 

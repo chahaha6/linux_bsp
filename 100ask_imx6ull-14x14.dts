@@ -920,6 +920,9 @@
 						linux,phandle = <0x27>;
 						phandle = <0x27>;
 					};
+					pinctrl_ds18b20: ds18b20-grp {
+        				fsl,pins = <0x01DC 0x0444 0x0000 0x5 0x0 0x1b0b0>;
+    					};
 				};
 			};
 
@@ -1657,5 +1660,12 @@
 			gpio-key,wakeup;
 			linux,code = <0x3>;
 		};
+	};
+	my_ds18b20{  
+		compatible = "my_ds18b20"; 
+		status = "okay";
+		// pinctrl-names = "default";
+ 		// pinctrl-0 = <&pinctrl_ds18b20>; // 必须引用上面的名字		
+		gpio = <&gpio4 19 0>;		
 	};
 };
