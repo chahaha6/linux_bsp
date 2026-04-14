@@ -18,5 +18,5 @@ clean:
 	rm -rf modules.order
 	rm -f test 
 
-obj-m	+= only_irq_copy.o
+obj-m	+= simple_io.o
 
