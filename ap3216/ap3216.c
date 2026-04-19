@@ -168,7 +168,6 @@ int ap3216_remove(struct i2c_client *client)
     unregister_chrdev_region(ap3216_devt,1);
     kfree(ap3216_dev);
 
-    // 关闭所有功能，进入掉电模式
     return 0;
 }
 

@@ -911,7 +911,11 @@
 						linux,phandle = <0x10>;
 						phandle = <0x10>;
 					};
-
+					imx6ull-board {
+        				BOARD_InitPins: BOARD_InitPinsGrp {                /*!< Function assigned for the core: Cortex-A7[ca7] */
+            				fsl,pins = <MX6UL_PAD_CSI_HSYNC__PWM8_OUT              0x000010B0>;
+							};
+						};
 					lcdifresetgrp {
 						fsl,pins = <0x114 0x3a0 0x0 0x5 0x0 0x1b0b0>;
 						linux,phandle = <0x30>;
