@@ -40,6 +40,7 @@
 		spi3 = "/soc/aips-bus@02000000/spba-bus@02000000/ecspi@02014000";
 		usbphy0 = "/soc/aips-bus@02000000/usbphy@020c9000";
 		usbphy1 = "/soc/aips-bus@02000000/usbphy@020ca000";
+	
 	};
 
 	memory {
@@ -245,7 +246,7 @@
 					status = "disabled";
 				};
 
-				ecspi@02010000 {
+				ecspi3:ecspi@02010000 {
 					#address-cells = <0x1>;
 					#size-cells = <0x0>;
 					compatible = "fsl,imx6ul-ecspi", "fsl,imx51-ecspi";
@@ -258,13 +259,15 @@
 					status = "okay";
 					pinctrl-names = "default";
 					pinctrl-0 = <0xa>;
-					cs-gpios = <0xb 0x14 0x1>;
+					cs-gpios = <0xb 0x14 0x0>;
 
 					icm20608@0 {
-						compatible = "invensense,icm20608";
+						compatible = "my_icm20608";
 						interrupt-parent = <0xb>;
 						interrupts = <0x1 0x1>;
 						spi-max-frequency = <0x7a1200>;
+						spi-cpol;
+						spi-cpha;
 						reg = <0x0>;
 					};
 				};
