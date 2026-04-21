@@ -45,6 +45,11 @@
         pwms = <&pwm7 0 20000000>;  
         status = "okay";
     };
+    sun_sensor{
+        compatible = "sun_sensor";
+        io-channels = <&adc1 4>;
+        io-channel-names = "adc_in";    // 给通道起个名字，方便驱动获取
+    };
     backlight {
         compatible = "pwm-backlight";
         pwms = <&pwm1 0 1000>;
@@ -918,6 +923,7 @@
     pinctrl-0 = <&pinctrl_adc1>;
     num-channels = <5>;
     vref-supply = <&reg_can_3v3>;
+    #io-channel-cells = <1>; 
     status = "okay";
 };
 
